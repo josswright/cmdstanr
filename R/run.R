@@ -705,7 +705,8 @@ CmdStanProcs <- R6::R6Class(
                           parallel_procs = NULL,
                           threads_per_proc = NULL,
                           show_stderr_messages = TRUE,
-                          show_stdout_messages = TRUE) {
+                          show_stdout_messages = TRUE,
+                          output_callback = NULL ) {
       checkmate::assert_integerish(num_procs, lower = 1, len = 1, any.missing = FALSE)
       checkmate::assert_integerish(parallel_procs, lower = 1, len = 1, any.missing = FALSE, null.ok = TRUE)
       checkmate::assert_integerish(threads_per_proc, lower = 1, len = 1, null.ok = TRUE)
@@ -715,6 +716,7 @@ CmdStanProcs <- R6::R6Class(
       } else {
         private$parallel_procs_ <- as.integer(parallel_procs)
       }
+      self$output_callback <- output_callback
       private$threads_per_proc_ <- as.integer(threads_per_proc)
       private$threads_per_proc_ <- threads_per_proc
       private$active_procs_ <- 0
@@ -728,6 +730,7 @@ CmdStanProcs <- R6::R6Class(
       private$show_stdout_messages_ <- show_stdout_messages
       invisible(self)
     },
+    output_callback = NULL,
     show_stdout_messages = function () {
       private$show_stdout_messages_
     },
@@ -1071,6 +1074,10 @@ CmdStanMCMCProcs <- R6::R6Class(
           if (private$proc_state_[[id]] == 1.5) {
             private$proc_state_[[id]] <- 3
           }
+        }
+        # Pass id and line to external callback function, if it exists.
+        if(!is.null(self$output_callback)){
+          self$output_callback(id,line)
         }
       }
       invisible(self)

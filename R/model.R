@@ -1153,6 +1153,7 @@ sample <- function(data = NULL,
                    window = NULL,
                    fixed_param = FALSE,
                    show_messages = TRUE,
+                   output_callback = NULL,
                    show_exceptions = TRUE,
                    diagnostics = c("divergences", "treedepth", "ebfmi"),
                    save_metric = NULL,
@@ -1226,7 +1227,8 @@ sample <- function(data = NULL,
     parallel_procs = checkmate::assert_integerish(parallel_chains, lower = 1, null.ok = TRUE),
     threads_per_proc = assert_valid_threads(threads_per_chain, self$cpp_options(), multiple_chains = TRUE),
     show_stderr_messages = show_exceptions,
-    show_stdout_messages = show_messages
+    show_stdout_messages = show_messages,
+    output_callback = output_callback
   )
   model_variables <- NULL
   if (is_variables_method_supported(self)) {
